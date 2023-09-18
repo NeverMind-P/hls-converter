@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>HLS Video Example</title>
+  </head>
+  <body>
+    <script src="https://cdn.jsdelivr.net/npm/hls.js@1"></script>
+    <video id="video"></video>
+    <script>
+      var video = document.getElementById("video");
+      var videoSrc = "http://localhost:3000/s1.m3u8";
+      if (Hls.isSupported()) {
+        console.log("asd");
+        var hls = new Hls();
+        hls.loadSource(videoSrc);
+        hls.attachMedia(video);
+      } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
+        video.src = videoSrc;
+      }
+    </script>
+  </body>
+</html>
+
+<!--ffmpeg -i input.mp4 -profile:v baseline -level 3.0 \
+       -filter_complex "scale=640:360,split=2[s1][s2];[s1]fps=30[s1out];[s2]fps=30[s2out]" \
+       -map "[s1out]" -b:v:0 800k -s 640x360 -start_number 0 -hls_time 10 -hls_list_size 0 -hls_segment_filename s1_%03d.ts s1.m3u8 \
+       -map "[s2out]" -b:v:1 1200k -s 1280x720 -start_number 0 -hls_time 10 -hls_list_size 0 -hls_segment_filename s2_%03d.ts s2.m3u8
+-->
